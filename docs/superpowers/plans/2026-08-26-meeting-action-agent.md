@@ -89,11 +89,14 @@ Edit `packages/core/package.json` — add a `"scripts"` block (keep the `depende
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "types": ["node"]
   },
   "include": ["src"]
 }
 ```
+
+(`"types": ["node"]` is required because npm workspaces hoist `@types/node` to the repo root — `packages/core` has no local `node_modules/@types`, and without an explicit `types` entry, TypeScript doesn't reliably pick up the hoisted ambient Node types, causing `node:fs`/`node:path`/etc. imports to fail with TS2591. Discovered and fixed during Task 5.)
 
 - [ ] **Step 7: Create packages/core/vitest.config.ts**
 
