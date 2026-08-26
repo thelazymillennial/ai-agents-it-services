@@ -6,7 +6,7 @@
 
 **Architecture:** An npm workspace with a single `packages/core` library. A pure pipeline function (`runMeetingActionAgent`) takes transcript input, builds a prompt, calls Claude with a schema forced via tool-use, validates the response with Zod, and returns a structured `AgentResult`. A generic fixture runner executes eval fixtures against the pipeline and reports pass/fail per hand-written assertion. A thin CLI and an eval-runner script are the only two things that talk to the real Anthropic API; everything else is unit-tested against a fake `ClaudeClient`.
 
-**Tech Stack:** TypeScript (ESM, NodeNext), npm workspaces, `@anthropic-ai/sdk`, `zod` + `zod-to-json-schema`, `vitest`, `tsx`, `dotenv`.
+**Tech Stack:** TypeScript (ESM, NodeNext), npm workspaces, `@anthropic-ai/sdk`, `zod` v4 (using its native `z.toJSONSchema()` — the separate `zod-to-json-schema` package was tried and dropped, see the Task 6 note below), `vitest`, `tsx`, `dotenv`.
 
 ---
 
@@ -56,8 +56,10 @@ The design spec's public `MeetingActionOutput` type has no `status` field — th
 Run: `npm install`
 Expected: exits 0, creates root `node_modules/` and `package-lock.json`.
 
-Run: `npm install @anthropic-ai/sdk zod zod-to-json-schema dotenv --workspace=@ai-agents-it-services/core`
-Expected: exits 0, `packages/core/package.json` now has a `"dependencies"` block with these four packages.
+Run: `npm install @anthropic-ai/sdk zod dotenv --workspace=@ai-agents-it-services/core`
+Expected: exits 0, `packages/core/package.json` now has a `"dependencies"` block with these three packages.
+
+(The plan originally also installed `zod-to-json-schema` here, but Task 6 found it silently produces broken output against zod v4 schemas and is unmaintained — it was removed via `npm uninstall`. Use zod v4's built-in `z.toJSONSchema()` instead, as Task 6 below now reflects.)
 
 - [ ] **Step 4: Install dev dependencies**
 
@@ -541,9 +543,10 @@ Expected: FAIL — `Cannot find module './schema.js'`
 
 - [ ] **Step 3: Write the implementation**
 
+(Uses zod v4's native `z.toJSONSchema()` — `zod-to-json-schema` was tried first and dropped: it lists zod v4 as an installable peer dependency but doesn't actually understand v4-constructed schemas, silently producing an empty/broken JSON schema. Its own README confirms it's unmaintained in favor of zod v4's built-in method.)
+
 ```ts
 import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import type { ToolDefinition } from "../../lib/ai/claudeClient.js";
 
 const evidenceSchema = z.object({
@@ -591,7 +594,7 @@ export type MeetingActionToolResponse = z.infer<
 export const MEETING_ACTION_TOOL_NAME = "emit_meeting_action";
 
 export function buildMeetingActionTool(): ToolDefinition {
-  const schema = zodToJsonSchema(meetingActionToolResponseSchema) as Record<
+  const schema = z.toJSONSchema(meetingActionToolResponseSchema) as Record<
     string,
     unknown
   >;
