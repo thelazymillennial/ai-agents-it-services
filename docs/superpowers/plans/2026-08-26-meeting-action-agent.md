@@ -116,7 +116,7 @@ ANTHROPIC_API_KEY=
 - [ ] **Step 9: Commit**
 
 ```bash
-git add package.json package-lock.json packages/core/package.json .env.example
+git add package.json package-lock.json packages/core/package.json packages/core/tsconfig.json packages/core/vitest.config.ts .env.example
 git commit -m "chore: scaffold npm workspace and core package"
 ```
 
