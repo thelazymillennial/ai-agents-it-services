@@ -65,6 +65,16 @@ describe("meetingActionToolResponseSchema", () => {
     const { insufficient_evidence, ...rest } = validResponse;
     expect(meetingActionToolResponseSchema.safeParse(rest).success).toBe(false);
   });
+
+  it("rejects a response with insufficient_evidence true but non-empty action_items", () => {
+    const inconsistent = {
+      ...validResponse,
+      insufficient_evidence: true,
+      insufficient_evidence_reason: "test",
+    };
+    // validResponse already has one action_item and one decision — leave them populated
+    expect(meetingActionToolResponseSchema.safeParse(inconsistent).success).toBe(false);
+  });
 });
 
 describe("buildMeetingActionTool", () => {

@@ -91,8 +91,8 @@ export async function runMeetingActionAgent(
   }
 
   throw new MeetingActionPipelineError(
-    `Claude's response did not match the expected schema after ${MAX_ATTEMPTS} attempts: ${String(
-      lastError
-    )}`
+    `Claude's response did not match the expected schema after ${MAX_ATTEMPTS} attempts: ${
+      lastError instanceof Error ? lastError.message : String(lastError)
+    }`
   );
 }

@@ -34,10 +34,27 @@ export type MeetingActionOutput = z.infer<typeof meetingActionOutputSchema>;
 // insufficient_evidence fields exist only so the model can report a dead-end
 // through the single forced tool call; pipeline.ts strips them before
 // constructing the public MeetingActionOutput.
-export const meetingActionToolResponseSchema = meetingActionOutputSchema.extend({
-  insufficient_evidence: z.boolean(),
-  insufficient_evidence_reason: z.string().optional(),
-});
+export const meetingActionToolResponseSchema = meetingActionOutputSchema
+  .extend({
+    insufficient_evidence: z.boolean(),
+    insufficient_evidence_reason: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.insufficient_evidence &&
+      (data.decisions.length > 0 ||
+        data.action_items.length > 0 ||
+        data.blockers.length > 0 ||
+        data.open_questions.length > 0 ||
+        data.follow_ups.length > 0)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "insufficient_evidence is true but decisions/action_items/blockers/open_questions/follow_ups are not all empty",
+      });
+    }
+  });
 
 export type MeetingActionToolResponse = z.infer<
   typeof meetingActionToolResponseSchema

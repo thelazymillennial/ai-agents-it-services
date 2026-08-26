@@ -72,6 +72,37 @@ describe("runMeetingActionAgent", () => {
     ).rejects.toThrow(MeetingActionPipelineError);
   });
 
+  it("retries and eventually throws when the response is self-inconsistent (insufficient_evidence true but data present)", async () => {
+    const inconsistentResponse = {
+      ...validResponse,
+      insufficient_evidence: true,
+      insufficient_evidence_reason: "flagged but also returned data",
+    };
+    const client = fakeClient([inconsistentResponse, inconsistentResponse]);
+    await expect(
+      runMeetingActionAgent({ transcript: "Alice: let's ship Friday" }, { client })
+    ).rejects.toThrow(MeetingActionPipelineError);
+    expect(client.callTool).toHaveBeenCalledTimes(2);
+  });
+
+  it("includes the validation failure reason in the thrown error message", async () => {
+    const client = fakeClient([{ bad: "shape" }, { still: "bad" }]);
+    await expect(
+      runMeetingActionAgent({ transcript: "Alice: let's ship Friday" }, { client })
+    ).rejects.toThrow(/did not match the expected schema/);
+  });
+
+  it("propagates a rejection if the Claude client call itself fails", async () => {
+    const client: ClaudeClient = {
+      callTool: vi.fn(async () => {
+        throw new Error("network error");
+      }),
+    };
+    await expect(
+      runMeetingActionAgent({ transcript: "Alice: let's ship Friday" }, { client })
+    ).rejects.toThrow("network error");
+  });
+
   it("reads the transcript from a file path when filePath is given", async () => {
     const client = fakeClient([validResponse]);
     const { writeFileSync, unlinkSync } = await import("node:fs");
