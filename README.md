@@ -6,7 +6,12 @@ Each agent is a bounded job: file/paste input in, an evidence-backed structured 
 
 ## Shipped
 
-_Nothing shipped yet — first build in progress._
+### Meeting → Action Agent
+Turns a meeting transcript into decisions, action items, owners, dates, blockers and open questions — without inventing an owner or due date the transcript doesn't support.
+
+- Input: a meeting transcript (paste or `.txt`/`.md` file), optional date/title/attendees
+- Output: structured decisions, action items (owner/due date/evidence), blockers, open questions, follow-ups
+- Known limitations: text/markdown input only (no PDF/DOCX yet), no UI yet — CLI only, single-transcript context (no cross-meeting memory)
 
 ## Currently building
 
@@ -18,7 +23,13 @@ File/paste input → bounded reasoning workflow → structured output → human 
 
 ## Run locally
 
-_Coming soon._
+```bash
+npm install
+cp .env.example .env   # then fill in ANTHROPIC_API_KEY
+npm run meeting-action -w @ai-agents-it-services/core -- path/to/transcript.txt
+npm run evals:meeting-action -w @ai-agents-it-services/core
+npm test -w @ai-agents-it-services/core
+```
 
 ## Safety & privacy
 
