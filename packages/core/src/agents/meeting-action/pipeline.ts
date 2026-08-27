@@ -22,6 +22,28 @@ export class MeetingActionPipelineError extends Error {}
 const MODEL = "claude-sonnet-5";
 const MAX_ATTEMPTS = 2;
 
+const LOCATOR_PATTERN = /^L(\d+)$/;
+
+function locatorsAreValid(
+  output: {
+    decisions: { evidence: { locator: string } }[];
+    action_items: { evidence: { locator: string } }[];
+  },
+  transcriptLineCount: number
+): boolean {
+  const allLocators = [
+    ...output.decisions.map((d) => d.evidence.locator),
+    ...output.action_items.map((a) => a.evidence.locator),
+  ];
+
+  return allLocators.every((locator) => {
+    const match = LOCATOR_PATTERN.exec(locator);
+    if (!match) return false;
+    const lineNumber = Number(match[1]);
+    return lineNumber >= 1 && lineNumber <= transcriptLineCount;
+  });
+}
+
 function resolveTranscript(input: MeetingActionInput): {
   transcript: string;
   filename: string;
@@ -44,6 +66,7 @@ export async function runMeetingActionAgent(
 ): Promise<AgentResult<MeetingActionOutput>> {
   const { transcript, filename } = resolveTranscript(input);
   const doc = buildTranscriptSourceDocument(transcript, filename);
+  const transcriptLineCount = doc.text.split("\n").length;
   const system = buildMeetingActionSystemPrompt();
   const userMessage = buildMeetingActionUserMessage(doc, input.metadata);
   const tool = buildMeetingActionTool();
@@ -73,6 +96,13 @@ export async function runMeetingActionAgent(
             ? [insufficient_evidence_reason]
             : ["Model reported insufficient evidence."],
         };
+      }
+
+      if (!locatorsAreValid(output, transcriptLineCount)) {
+        lastError = new Error(
+          `One or more evidence locators are invalid or out of range for a ${transcriptLineCount}-line transcript`
+        );
+        continue;
       }
 
       return {
