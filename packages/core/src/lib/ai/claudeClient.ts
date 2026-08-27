@@ -17,7 +17,7 @@ export interface ClaudeClient {
 
 type AnthropicMessagesClient = {
   messages: {
-    create(params: any): Promise<{
+    create(params: unknown): Promise<{
       content: Array<{ type: string; input?: unknown }>;
     }>;
   };

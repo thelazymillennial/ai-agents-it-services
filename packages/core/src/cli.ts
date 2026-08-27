@@ -11,6 +11,12 @@ async function main() {
     return;
   }
 
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error("ANTHROPIC_API_KEY is not set. Add it to .env or your shell environment.");
+    process.exitCode = 1;
+    return;
+  }
+
   const sdk = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const client = new AnthropicClaudeClient(sdk);
 
