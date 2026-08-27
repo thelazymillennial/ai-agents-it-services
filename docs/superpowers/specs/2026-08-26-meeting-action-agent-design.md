@@ -56,7 +56,7 @@ second agent needs them.
         pipeline.ts  # normalize -> call -> validate -> AgentResult<T>
         fixtures/    # 12+ eval fixture files (input + expected assertions)
         evals.ts     # runs fixtures against pipeline.ts, prints pass/fail
-    cli.ts         # `npm run meeting-action -- path/to/transcript.txt`
+    cli.ts         # `npm run meeting-action -w @ai-agents-it-services/core -- path/to/transcript.txt`
 .env.example       # ANTHROPIC_API_KEY=
 ```
 
@@ -176,7 +176,7 @@ The system prompt establishes, in substance:
 
 ## Definition of Done
 
-- [ ] `npm run meeting-action -- <file>` runs end to end against a real transcript
+- [ ] `npm run meeting-action -w @ai-agents-it-services/core -- <file>` runs end to end against a real transcript
 - [ ] All 12 fixtures pass their assertions
 - [ ] Zero invented owner/date across the fixture set
 - [ ] Malformed input handled without throwing
