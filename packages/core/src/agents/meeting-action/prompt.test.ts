@@ -3,7 +3,7 @@ import {
   buildMeetingActionSystemPrompt,
   buildMeetingActionUserMessage,
 } from "./prompt.js";
-import { buildTranscriptSourceDocument } from "../../lib/text/sourceDocument.js";
+import { buildTextSourceDocument } from "../../lib/text/sourceDocument.js";
 
 describe("buildMeetingActionSystemPrompt", () => {
   it("instructs the model to never invent an owner", () => {
@@ -21,25 +21,25 @@ describe("buildMeetingActionSystemPrompt", () => {
 
 describe("buildMeetingActionUserMessage", () => {
   it("wraps the transcript in <transcript> delimiters", () => {
-    const doc = buildTranscriptSourceDocument("Alice: hi", "call.txt");
+    const doc = buildTextSourceDocument("Alice: hi", { filename: "call.txt", kind: "transcript" });
     const message = buildMeetingActionUserMessage(doc);
     expect(message).toContain("<transcript>\nL1: Alice: hi\n</transcript>");
   });
 
   it("includes supplied metadata", () => {
-    const doc = buildTranscriptSourceDocument("Alice: hi", "call.txt");
+    const doc = buildTextSourceDocument("Alice: hi", { filename: "call.txt", kind: "transcript" });
     const message = buildMeetingActionUserMessage(doc, { date: "2026-08-20" });
     expect(message).toContain("Meeting date: 2026-08-20");
   });
 
   it("omits metadata lines when none are supplied", () => {
-    const doc = buildTranscriptSourceDocument("Alice: hi", "call.txt");
+    const doc = buildTextSourceDocument("Alice: hi", { filename: "call.txt", kind: "transcript" });
     const message = buildMeetingActionUserMessage(doc);
     expect(message).not.toContain("Meeting date:");
   });
 
   it("wraps metadata in <meeting_metadata> delimiters when present", () => {
-    const doc = buildTranscriptSourceDocument("Alice: hi", "call.txt");
+    const doc = buildTextSourceDocument("Alice: hi", { filename: "call.txt", kind: "transcript" });
     const message = buildMeetingActionUserMessage(doc, { date: "2026-08-20" });
     expect(message).toContain("<meeting_metadata>\nMeeting date: 2026-08-20\n</meeting_metadata>");
   });

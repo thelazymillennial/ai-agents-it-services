@@ -1,20 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { buildTranscriptSourceDocument } from "./sourceDocument.js";
+import { buildTextSourceDocument } from "./sourceDocument.js";
 
-describe("buildTranscriptSourceDocument", () => {
+describe("buildTextSourceDocument", () => {
   it("prefixes each line with a line number", () => {
-    const doc = buildTranscriptSourceDocument("Alice: hi\nBob: hey", "call.txt");
+    const doc = buildTextSourceDocument("Alice: hi\nBob: hey", { filename: "call.txt" });
     expect(doc.text).toBe("L1: Alice: hi\nL2: Bob: hey");
   });
 
-  it("sets kind to transcript and keeps the filename", () => {
-    const doc = buildTranscriptSourceDocument("hello", "call.txt");
+  it("sets kind and filename from options", () => {
+    const doc = buildTextSourceDocument("hello", { filename: "call.txt", kind: "transcript" });
     expect(doc.kind).toBe("transcript");
     expect(doc.filename).toBe("call.txt");
   });
 
-  it("defaults the filename when none is given", () => {
-    const doc = buildTranscriptSourceDocument("hello");
-    expect(doc.filename).toBe("transcript");
+  it("defaults filename to 'document' and kind to 'txt' when options are omitted", () => {
+    const doc = buildTextSourceDocument("hello");
+    expect(doc.filename).toBe("document");
+    expect(doc.kind).toBe("txt");
   });
 });

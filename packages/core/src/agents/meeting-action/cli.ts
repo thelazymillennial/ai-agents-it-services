@@ -1,7 +1,7 @@
 import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
-import { AnthropicClaudeClient } from "./lib/ai/claudeClient.js";
-import { runMeetingActionAgent } from "./agents/meeting-action/pipeline.js";
+import { AnthropicClaudeClient } from "../../lib/ai/claudeClient.js";
+import { runMeetingActionAgent } from "./pipeline.js";
 
 async function main() {
   const filePath = process.argv[2];

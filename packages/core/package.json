@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc -p .",
     "test": "vitest run",
-    "meeting-action": "tsx src/cli.ts",
+    "meeting-action": "tsx src/agents/meeting-action/cli.ts",
     "evals:meeting-action": "tsx src/agents/meeting-action/evals.ts"
   }
 }
