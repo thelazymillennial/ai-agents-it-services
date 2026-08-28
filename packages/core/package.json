@@ -18,6 +18,8 @@
     "build": "tsc -p .",
     "test": "vitest run",
     "meeting-action": "tsx src/agents/meeting-action/cli.ts",
-    "evals:meeting-action": "tsx src/agents/meeting-action/evals.ts"
+    "evals:meeting-action": "tsx src/agents/meeting-action/evals.ts",
+    "requirements-gap": "tsx src/agents/requirements-gap/cli.ts",
+    "evals:requirements-gap": "tsx src/agents/requirements-gap/evals.ts"
   }
 }
