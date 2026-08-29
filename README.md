@@ -10,6 +10,7 @@ Practical AI agents for workflows that people in IT-services teams still do manu
 *Agents for the people running client engagements — status, follow-through, accountability.*
 
 * [📝 Meeting → Action Agent](packages/core/src/agents/meeting-action/) — Turns a transcript into decisions and action items, evidence-backed, never invents an owner or a date
+* [🔍 Requirements Gap Agent](packages/core/src/agents/requirements-gap/) — Finds ambiguity, missing acceptance criteria, contradictions and undefined terms in a requirements document before engineering or QA sees it
 
 ## 🚧 Currently building
 
@@ -26,6 +27,8 @@ npm install
 cp .env.example .env   # then fill in ANTHROPIC_API_KEY
 npm run meeting-action -w @ai-agents-it-services/core -- path/to/transcript.txt
 npm run evals:meeting-action -w @ai-agents-it-services/core
+npm run requirements-gap -w @ai-agents-it-services/core -- path/to/requirements.txt
+npm run evals:requirements-gap -w @ai-agents-it-services/core
 npm test -w @ai-agents-it-services/core
 ```
 

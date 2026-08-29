@@ -1,18 +1,23 @@
 import type { SourceDocument } from "../types.js";
 
-export function buildTranscriptSourceDocument(
-  rawTranscript: string,
-  filename = "transcript"
+export type BuildTextSourceDocumentOptions = {
+  filename?: string;
+  kind?: SourceDocument["kind"];
+};
+
+export function buildTextSourceDocument(
+  rawText: string,
+  options: BuildTextSourceDocumentOptions = {}
 ): SourceDocument {
-  const numbered = rawTranscript
+  const numbered = rawText
     .split(/\r?\n/)
     .map((line, index) => `L${index + 1}: ${line}`)
     .join("\n");
 
   return {
-    id: "transcript-1",
-    filename,
-    kind: "transcript",
+    id: "doc-1",
+    filename: options.filename ?? "document",
+    kind: options.kind ?? "txt",
     text: numbered,
   };
 }

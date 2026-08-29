@@ -1,6 +1,6 @@
 import type { ClaudeClient } from "../../lib/ai/claudeClient.js";
 import type { AgentResult } from "../../lib/types.js";
-import { buildTranscriptSourceDocument } from "../../lib/text/sourceDocument.js";
+import { buildTextSourceDocument } from "../../lib/text/sourceDocument.js";
 import { readTranscriptFile } from "../../lib/files/readTranscriptFile.js";
 import {
   buildMeetingActionSystemPrompt,
@@ -65,7 +65,7 @@ export async function runMeetingActionAgent(
   deps: { client: ClaudeClient }
 ): Promise<AgentResult<MeetingActionOutput>> {
   const { transcript, filename } = resolveTranscript(input);
-  const doc = buildTranscriptSourceDocument(transcript, filename);
+  const doc = buildTextSourceDocument(transcript, { filename, kind: "transcript" });
   const transcriptLineCount = doc.text.split("\n").length;
   const system = buildMeetingActionSystemPrompt();
   const userMessage = buildMeetingActionUserMessage(doc, input.metadata);
