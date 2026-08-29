@@ -9,3 +9,6 @@ build/
 
 # Private roadmap / internal strategy — never publish
 /docs/internal/
+
+# Local worktree sessions
+/.claude/
