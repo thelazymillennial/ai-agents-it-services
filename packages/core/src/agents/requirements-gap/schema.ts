@@ -53,7 +53,8 @@ export const requirementsGapToolResponseSchema = requirementsGapOutputSchema
         data.contradictions.length > 0 ||
         data.undefined_terms.length > 0 ||
         data.edge_cases.length > 0 ||
-        data.testability_issues.length > 0)
+        data.testability_issues.length > 0 ||
+        data.stakeholder_questions.length > 0)
     ) {
       ctx.addIssue({
         code: "custom",

@@ -89,6 +89,21 @@ describe("requirementsGapToolResponseSchema", () => {
     expect(requirementsGapToolResponseSchema.safeParse(inconsistent).success).toBe(false);
   });
 
+  it("rejects a response with insufficient_evidence true but non-empty stakeholder_questions", () => {
+    const inconsistent = {
+      ...validResponse,
+      ambiguities: [],
+      missing_information: [],
+      contradictions: [],
+      undefined_terms: [],
+      edge_cases: [],
+      testability_issues: [],
+      insufficient_evidence: true,
+      insufficient_evidence_reason: "test",
+    };
+    expect(requirementsGapToolResponseSchema.safeParse(inconsistent).success).toBe(false);
+  });
+
   it("rejects a response missing insufficient_evidence", () => {
     const { insufficient_evidence, ...rest } = validResponse;
     expect(requirementsGapToolResponseSchema.safeParse(rest).success).toBe(false);

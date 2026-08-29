@@ -70,6 +70,7 @@ describe("runRequirementsGapAgent", () => {
         contradictions: [],
         undefined_terms: [],
         testability_issues: [],
+        stakeholder_questions: [],
       },
     ]);
     const result = await runRequirementsGapAgent({ text: "???" }, { client });
